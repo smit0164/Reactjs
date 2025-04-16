@@ -8,6 +8,7 @@ import {
 } from '../features/modal/modalSlice';
 import AddGroupModal from './modals/AddGroupModal';
 import AddExpenseModal from './modals/AddExpenseModal';
+import { deleteExpense } from '../features/expenseSlice';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -49,17 +50,20 @@ const Dashboard = () => {
         {getGroup.length === 0 ? (
           <p className="text-gray-500 italic">No groups added yet.</p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {getGroup.map((group) => (
-              <div
-                key={group.id}
-                className="p-4 bg-white rounded-lg shadow hover:shadow-md transition"
-              >
-                <h3 className="text-lg font-medium text-gray-800">{group.name}</h3>
-                <p className="text-sm text-gray-500">Group ID: {group.id}</p>
-              </div>
-            ))}
-          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-6 lg:grid-cols-5 gap-2">
+          {getGroup.map((group) => (
+            <div
+              key={group.id}
+              className="w-24 h-24 bg-white rounded-lg shadow hover:shadow-md transition flex flex-col items-center justify-center"
+            >
+              <h3 className="text-sm font-medium text-gray-800 truncate text-center">
+                {group.name}
+              </h3>
+              <p className="text-xs text-gray-500 mt-1 truncate">ID: {group.id}</p>
+            </div>
+          ))}
+        </div>
+        
         )}
       </div>
 
@@ -69,30 +73,32 @@ const Dashboard = () => {
         {getExpense.length === 0 ? (
           <p className="text-gray-500 italic">No expenses added yet.</p>
         ) : (
-          <ul className="space-y-4">
-            {getExpense.map((expense) => {
-              console.log("expense",expense); // ✅ Now this will work
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {getExpense.map((expense) => (
+              <div
+                key={expense.id}
+                className="p-4 bg-white rounded-lg shadow hover:shadow-md transition"
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <h3 className="text-lg font-semibold text-gray-800">{expense.title}</h3>
+                  <span className="text-green-600 font-bold text-sm">
+                    ₹ {expense.amount}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500">Date: {expense.date}</p>
+                <p className="text-sm text-gray-500 mb-2">Group ID: {expense.groupId}</p>
 
-              return (
-                <li
-                  key={expense.id}
-                  className="p-4 bg-white rounded-lg shadow hover:shadow-md transition"
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+                  onClick={() => dispatch(deleteExpense(expense.id))}
                 >
-                  <div className="flex justify-between items-center mb-1">
-                    <h3 className="text-lg font-semibold text-gray-800">{expense.title}</h3>
-                    <span className="text-green-600 font-bold text-sm">
-                      ₹ {expense.amount}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-500">Date: {expense.date}</p>
-                  <p className="text-sm text-gray-500">Group ID: {expense.groupId}</p>
-                </li>
-              );
-            })}
-          </ul>
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
-
     </div>
   );
 };

@@ -37,7 +37,8 @@ const groupSlice=createSlice({
               } catch (err) {
                 console.error('Error saving state to localStorage:', err);
               }
-        }
+        },
+       
     }
 })
 

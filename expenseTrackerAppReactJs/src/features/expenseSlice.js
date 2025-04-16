@@ -30,14 +30,14 @@ const defaultInitialState = {
 
 // Use persisted state if available, else default
 const initialState = loadFromLocalStorage() || defaultInitialState;
-
+let count=2
 const expenseSlice = createSlice({
   name: 'expense',
   initialState,
   reducers: {
     AddExpense: (state, action) => {
       const expense = {
-        id: Date.now(),
+        id:count++,
         title: action.payload.title,
         amount: action.payload.amount,
         groupId: action.payload.groupId,
@@ -51,8 +51,13 @@ const expenseSlice = createSlice({
         console.error('Error saving state to localStorage:', err);
       }
     },
+    deleteExpense:(state,action)=>{
+      console.log(action)
+      state.expense=state.expense.filter((exp)=>exp.id!==action.payload)
+      localStorage.setItem('expenseState', JSON.stringify(state));
+   }
   },
 });
 
-export const { AddExpense } = expenseSlice.actions;
+export const { AddExpense,deleteExpense } = expenseSlice.actions;
 export default expenseSlice.reducer;
