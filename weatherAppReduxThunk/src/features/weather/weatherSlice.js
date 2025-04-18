@@ -34,6 +34,7 @@ export const weatherSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+   
     builder
       .addCase(getWeather.pending, (state) => {
         state.loading = true
