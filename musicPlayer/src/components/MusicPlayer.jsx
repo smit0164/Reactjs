@@ -12,7 +12,7 @@ const MusicPlayer = ({ id }) => {
 
 
   const handleTogglePlay = () => {
-    setIsPlaying(!isPlaying); // toggle play state
+    setIsPlaying(!isPlaying); 
   };
   const handlePlayNext=()=>{
     dispatch(nextSong())
@@ -20,6 +20,11 @@ const MusicPlayer = ({ id }) => {
   const handlePlayPrev=()=>{
     dispatch(prevSong())
   }
+  
+  useEffect(() => {
+    setIsPlaying(true); // Auto-play new song
+    audioRef.current.play();
+  }, [song]);
 
   useEffect(()=>{
     if (isPlaying) {
@@ -27,9 +32,7 @@ const MusicPlayer = ({ id }) => {
     } else {
       audioRef.current.pause();
     }
-  })
-
-  if (!song) return null;
+  },[isPlaying])
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl bg-gradient-to-r from-indigo-100 to-purple-100 backdrop-blur-lg text-gray-900 rounded-xl shadow-lg z-50 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 border border-indigo-200/50">
@@ -88,7 +91,7 @@ const MusicPlayer = ({ id }) => {
       </div>
   
       {/* Audio Element (hidden) */}
-      <audio controls ref={audioRef} src={song.src} type="audio/mpeg">
+      <audio controls ref={audioRef} src={song.src} type="audio/mpeg" onError={() => alert('Failed to load audio')}>
         Your browser does not support the audio element.
       </audio>
     </div>

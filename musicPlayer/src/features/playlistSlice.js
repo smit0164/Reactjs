@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { act } from 'react';
 
 const initialState = {
   playlistForm: false,
@@ -14,7 +15,6 @@ export const fetchPlaylist = createAsyncThunk(
     try {
       const response = await fetch('https://6801ea0181c7e9fbcc43b5c2.mockapi.io/playlists');
       const data = await response.json();
-      console.log('data:', data);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue('Something went wrong while fetching the playlist');
@@ -72,7 +72,6 @@ export const AddSongToPlaylist = createAsyncThunk(
           'Content-Type': 'application/json',
         },
       });
-
       const data = await response.json();
       console.log('Updated playlist response:', data);
       return data;
@@ -81,6 +80,27 @@ export const AddSongToPlaylist = createAsyncThunk(
     }
   }
 );
+
+export const deletePlayList = createAsyncThunk(
+  'playlist/deletePlaylist',
+  async (playlistId, thunkAPI) => {
+    try {
+    
+      await fetch(`https://6801ea0181c7e9fbcc43b5c2.mockapi.io/playlists/${playlistId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      return playlistId; // return ID to remove from store
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Something went wrong while deleting the playlist');
+    }
+  }
+);
+
+
+
 
 const playlistSlice = createSlice({
   name: 'playlist',
@@ -106,8 +126,9 @@ const playlistSlice = createSlice({
         state.playlists = action.payload;
       })
       .addCase(fetchPlaylist.rejected, (state, action) => {
+
         state.loading = false;
-        state.error = action.payload || action.error.message;
+        state.error = action.payload;
       })
       // createPlayList
       .addCase(createPlayList.pending, (state) => {
@@ -140,7 +161,23 @@ const playlistSlice = createSlice({
       .addCase(AddSongToPlaylist.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
-      });
+      })
+      .addCase(deletePlayList.pending,(state)=>{
+         state.loading=true;
+         state.error=false;
+      })
+      .addCase(deletePlayList.fulfilled,(state,action)=>{
+           state.loading=false;
+           state.error=false;
+           state.playlists=state.playlists.filter((playlist)=>{
+                return playlist.id!=action.payload
+           })
+           
+      })
+      .addCase(deletePlayList.rejected,(state,action)=>{
+         state.loading=false;
+         state.error=action.payload;
+      })
   },
 });
 

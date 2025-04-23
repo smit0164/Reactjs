@@ -8,7 +8,6 @@ import ShowPlaylists from './ShowPlaylist';
 const SongList = () => {
   const { songs, isPlaying, currentId } = useSelector((state) => state.player);
   const playlistFormOpen = useSelector((state) => state.playlist.playlistForm);
-  console.log(playlistFormOpen)
   const currentSongId = useSelector((state) => state.playlist.currentSongId);
 
   return (
@@ -30,6 +29,7 @@ const SongList = () => {
         <div className="flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {songs.map((song, index) => (
+              
               <SongCard key={index} song={song} />
             ))}
           </div>
